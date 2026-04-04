@@ -1,22 +1,36 @@
 set shell := ["cmd.exe", "/C"]
 
-# Показать доступные команды
+# Show available commands
+[group("General")]
 default:
     just --list
 
-# Запуск приложения
+# =====
+# SERVER
+# =====
+
+# Run the application
+[group("Server")]
 up:
     uv run python -m src.main
 
-# Все тесты
+# =====
+# TESTS
+# =====
+
+# All tests
+[group("Test")]
 test:
     uv run pytest -q
+alias test-all := test
 
-# Юнит-тесты (по маркеру unit)
+# Unit tests
+[group("Test")]
 test-unit:
-    uv run pytest -q -m unit
+    uv run pytest tests/unit
 
-# Интеграционные тесты (по маркеру integration)
+# Integration tests
+[group("Test")]
 test-integration:
-    uv run pytest -q -m integration
-
+    uv run pytest tests/integration
+alias test-int := test-integration
