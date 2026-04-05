@@ -1,22 +1,30 @@
-from dataclasses import dataclass
-from datetime import datetime
-from uuid import UUID, uuid4
+from sqlalchemy import Boolean, String
+from sqlalchemy.orm import Mapped, mapped_column
+
+from src.core.models.base import BaseModel
+from src.core.models.mixins import TimestampMixinModel, UUIDMixinModel
 
 
-@dataclass(slots=True)
-class User:
-    id: UUID
-    email: str
-    full_name: str
-    is_active: bool
-    created_at: datetime
+class UserModel(BaseModel, TimestampMixinModel, UUIDMixinModel):
+    __tablename__ = "users"
 
-    @classmethod
-    def create(cls, email: str, full_name: str) -> "User":
-        return cls(
-            id=uuid4(),
-            email=email,
-            full_name=full_name,
-            is_active=True,
-            created_at=datetime.utcnow(),
-        )
+    username: Mapped[str] = mapped_column(
+        String(30),
+        unique=True,
+        nullable=False,
+        index=True,
+    )
+
+    hashed_password: Mapped[str] = mapped_column(
+        String(255),
+        nullable=False,
+    )
+
+    is_active: Mapped[bool] = mapped_column(
+        Boolean,
+        default=True,
+        nullable=False,
+    )
+
+    def __repr__(self):
+        return f"<UserModel(id={self.id}, username={self.username}, is_active={self.is_active})>"

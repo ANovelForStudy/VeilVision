@@ -4,7 +4,7 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field, SecretStr, field_validator
 
 from src.core.schemas.base import BaseSchema, BaseSchemaWithForbiddenExtra
-from src.core.schemas.mixins import TimestampMixin
+from src.core.schemas.mixins import TimestampMixinSchema
 
 
 class UserCreateRequestSchema(BaseSchema):
@@ -28,13 +28,14 @@ class UserCreateRequestSchema(BaseSchema):
 
         return value
 
+    # ! TODO: Realize this method and add a library to check the password strength
     # @field_validator("password")
     # @classmethod
     # def validate_password_strength(cls, value: str | None) -> SecretStr | None:
     #     pass
 
 
-class UserResponseSchema(BaseSchemaWithForbiddenExtra, TimestampMixin):
+class UserResponseSchema(BaseSchemaWithForbiddenExtra, TimestampMixinSchema):
     id: UUID
     username: str = Field(
         min_length=3,
