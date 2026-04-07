@@ -5,13 +5,18 @@ sys.path.append(
     str(Path(__file__).parent.parent),
 )
 
+from typing import Type
+
 import uvicorn
 from dishka import make_async_container
 from dishka.integrations.fastapi import setup_dishka
 from fastapi import FastAPI
 
-from src.api import api_router
-from src.dependencies.container import AppProvider
+from src.api.routers import include_routers
+from src.config import Config
+from src.config.base import BaseConfig
+from src.config.database import PostgresSettings
+from src.dependencies.providers import AppProvider, get_all_providers
 
 
 def get_fastapi_application() -> FastAPI:
@@ -20,35 +25,41 @@ def get_fastapi_application() -> FastAPI:
         debug=True,
     )
 
+    configure_dishka_container(app)
+
+    include_routers(app)
+
     return app
 
 
-def include_routers(app: FastAPI) -> None:
-    app.include_router(api_router)
+def configure_dishka_container(
+    app: FastAPI,
+    config: Config | None = None,
+) -> None:
+    if config is None:
+        config = Config()
 
+    context: dict[Type[BaseConfig], BaseConfig] = {
+        PostgresSettings: config.postgres_settings,
+    }
 
-def configure_dishka_container(app: FastAPI) -> None:
-    container = make_async_container(
-        AppProvider(),
+    dependency_container = make_async_container(
+        *get_all_providers(),
+        context=context,
     )
 
     setup_dishka(
-        container=container,
+        container=dependency_container,
         app=app,
     )
 
 
 def main():
-    app = get_fastapi_application()
-
-    configure_dishka_container(app)
-
-    include_routers(app)
-
     uvicorn.run(
         "src.main:get_fastapi_application",
         # ! TODO: Move to .env
         reload=True,
+        factory=True,
     )
 
 

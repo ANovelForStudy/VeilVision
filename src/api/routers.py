@@ -1,6 +1,16 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, FastAPI
 
-from src.entities.users.controllers import router as users_router
+from src.entities.users.controllers import users_router
 
-api_router = APIRouter(prefix="/api")
-api_router.include_router(users_router)
+
+def include_routers(app: FastAPI) -> None:
+    main_api_router = APIRouter(prefix="/api")
+
+    routers: list[APIRouter] = [
+        users_router,
+    ]
+
+    for router in routers:
+        main_api_router.include_router(router)
+
+    app.include_router(main_api_router)

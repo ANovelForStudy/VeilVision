@@ -1,6 +1,7 @@
-from src.core.uow.unit_of_work import IUnitOfWork, SQLAlchemyUnitOfWork
+from src.core.uow.interfaces import IUnitOfWork
+from src.core.uow.unit_of_work import SqlAlchemyUnitOfWork
 
 __all__ = (
     "IUnitOfWork",
-    "SQLAlchemyUnitOfWork",
+    "SqlAlchemyUnitOfWork",
 )

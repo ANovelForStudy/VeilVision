@@ -7,10 +7,10 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
-from src.config import application_config
-
 
 class IDatabaseHelper(Protocol):
+    def get_engine(self) -> AsyncEngine: ...
+
     def get_session_factory(self) -> async_sessionmaker[AsyncSession]: ...
 
     async def get_session(self) -> AsyncGenerator[AsyncSession, None]: ...
@@ -48,8 +48,3 @@ class DatabaseHelper:
                 raise
             finally:
                 session.close()
-
-
-# database_helper = DatabaseHelper(
-#     url=application_config.database_settings.postgres_dsn.unicode_string(),
-# )

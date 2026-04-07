@@ -1,16 +1,13 @@
 from dotenv import load_dotenv
 
-from src.config.database import DatabaseSettings
+from src.config.database import PostgresSettings
 
 
-class ApplicationConfig:
-    def __init__(self):
+class Config:
+    def __init__(
+        self,
+        postgres_settings: PostgresSettings | None = None,
+    ):
         load_dotenv()
 
-        self.database_settings = DatabaseSettings()
-
-
-application_config = ApplicationConfig()
-
-if __name__ == "__main__":
-    print(application_config.database_settings.postgres_dsn.unicode_string())
+        self.postgres_settings = postgres_settings or PostgresSettings()

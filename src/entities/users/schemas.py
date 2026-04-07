@@ -1,19 +1,65 @@
 from datetime import datetime
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, SecretStr, field_validator
+
+from src.core.schemas.base import BaseSchema, BaseSchemaWithForbiddenExtra
+from src.core.schemas.mixins import TimestampMixinSchema
+
+# =====
+# BASE
+# =====
 
 
-class UserCreateRequest(BaseModel):
-    email: str = Field(min_length=5, max_length=255)
-    full_name: str = Field(min_length=1, max_length=255)
+class UserBaseSchema(BaseSchema):
+    username: str = Field(
+        min_length=3,
+        max_length=30,
+    )
+
+    @field_validator("username")
+    @classmethod
+    def validate_username(cls, value: str | None) -> str | None:
+        if value is not None:
+            if not value.replace("_", "").isalnum():
+                raise ValueError(
+                    "Username must contain only letters, numbers and underscores"
+                )
+
+        return value
 
 
-class UserResponse(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
+# =====
+# REQUESTS
+# =====
 
+
+class UserCreateRequestSchema(UserBaseSchema):
+    password: SecretStr = Field(
+        min_length=3,
+        max_length=32,
+    )
+
+
+class UserCreateWithHashedPasswordRequestSchema(UserBaseSchema):
+    hashed_password: str
+
+
+# =====
+# RESPONSES
+# =====
+
+
+class UserResponseSchema(BaseSchemaWithForbiddenExtra, TimestampMixinSchema):
     id: UUID
-    email: str
-    full_name: str
-    is_active: bool
-    created_at: datetime
+    username: str = Field(
+        min_length=3,
+        max_length=30,
+    )
+    is_active: bool = Field(
+        True,
+    )
+
+
+class UserDatabaseRecordSchema(UserResponseSchema):
+    hashed_password: str
