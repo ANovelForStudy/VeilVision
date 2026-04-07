@@ -1,20 +1,64 @@
-# from uuid import UUID
+from src.core.uow import IUnitOfWork
+from src.entities.users.password_hasher import IPasswordHasher
+from src.entities.users.schemas import (
+    UserCreateRequestSchema,
+    UserCreateWithHashedPasswordRequestSchema,
+    UserResponseSchema,
+)
 
-# from src.entities.users.models import User
-# from src.entities.users.repositories import IUserRepository
-# from src.entities.users.schemas import UserCreateRequest
 
+class UserService:
+    def __init__(
+        self,
+        uow: IUnitOfWork,
+        password_hasher: IPasswordHasher,
+    ):
+        self._uow = uow
+        self._password_hasher = password_hasher
 
-# class UserService:
-#     def __init__(self, users_repo: IUserRepository) -> None:
-#         self._users_repo = users_repo
+    # =====
+    # CREATE
+    # =====
 
-#     async def create_user(self, payload: UserCreateRequest) -> User:
-#         user = User.create(
-#             email=payload.email,
-#             full_name=payload.full_name,
-#         )
-#         return await self._users_repo.create(user)
+    async def create_user(
+        self,
+        user_data: UserCreateRequestSchema,
+    ) -> UserResponseSchema:
+        async with self._uow:
+            existing_user: (
+                UserResponseSchema | None
+            ) = await self._uow.user_repository.get_user_by_username(
+                username=user_data.username,
+            )
 
-#     async def get_user(self, user_id: UUID) -> User | None:
-#         return await self._users_repo.get_by_id(user_id)
+            if existing_user:
+                # ! TODO: Add custom exception
+                raise Exception
+
+            hashed_password = self._password_hasher.hash(
+                user_data.password.get_secret_value(),
+            )
+
+            user_data_with_hashed_password = UserCreateWithHashedPasswordRequestSchema(
+                username=user_data.username,
+                hashed_password=hashed_password,
+            )
+
+            created_user: UserResponseSchema = (
+                await self._uow.user_repository.create_user(
+                    user_data=user_data_with_hashed_password,
+                )
+            )
+
+            await self._uow.commit()
+            return created_user
+
+    # =====
+    # READ
+    # =====
+
+    async def get_all_users(self) -> list[UserResponseSchema]:
+        async with self._uow:
+            users = await self._uow.user_repository.get_all_users()
+
+        return users

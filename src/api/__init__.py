@@ -1,3 +1,3 @@
-from src.api.routers import api_router
+from src.api.routers import include_routers
 
-__all__ = ("api_router",)
+__all__ = ("include_routers",)

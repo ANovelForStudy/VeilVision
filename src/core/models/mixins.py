@@ -26,7 +26,7 @@ class TimestampMixinModel:
     )
 
 
-class UUIDMixinModel:
+class UuidMixinModel:
     __abstract__ = True
 
     id: Mapped[uuid.UUID] = mapped_column(

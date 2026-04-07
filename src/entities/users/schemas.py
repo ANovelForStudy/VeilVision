@@ -6,15 +6,15 @@ from pydantic import BaseModel, ConfigDict, Field, SecretStr, field_validator
 from src.core.schemas.base import BaseSchema, BaseSchemaWithForbiddenExtra
 from src.core.schemas.mixins import TimestampMixinSchema
 
+# =====
+# BASE
+# =====
 
-class UserCreateRequestSchema(BaseSchema):
+
+class UserBaseSchema(BaseSchema):
     username: str = Field(
         min_length=3,
         max_length=30,
-    )
-    password: SecretStr = Field(
-        min_length=3,
-        max_length=32,
     )
 
     @field_validator("username")
@@ -28,11 +28,26 @@ class UserCreateRequestSchema(BaseSchema):
 
         return value
 
-    # ! TODO: Realize this method and add a library to check the password strength
-    # @field_validator("password")
-    # @classmethod
-    # def validate_password_strength(cls, value: str | None) -> SecretStr | None:
-    #     pass
+
+# =====
+# REQUESTS
+# =====
+
+
+class UserCreateRequestSchema(UserBaseSchema):
+    password: SecretStr = Field(
+        min_length=3,
+        max_length=32,
+    )
+
+
+class UserCreateWithHashedPasswordRequestSchema(UserBaseSchema):
+    hashed_password: str
+
+
+# =====
+# RESPONSES
+# =====
 
 
 class UserResponseSchema(BaseSchemaWithForbiddenExtra, TimestampMixinSchema):

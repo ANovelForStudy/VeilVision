@@ -1,4 +1,4 @@
-from sqlalchemy import UUID as SQLAlchemyUUID
+from sqlalchemy import UUID as saUUID
 from sqlalchemy import Boolean, DateTime, String
 
 from src.core.models.base import (
@@ -40,7 +40,7 @@ def test_user_model_has_required_columns():
 
 def test_user_model_column_types():
     id_col = UserModel.__table__.columns["id"]
-    assert isinstance(id_col.type, SQLAlchemyUUID)
+    assert isinstance(id_col.type, saUUID)
 
     username_col = UserModel.__table__.columns["username"]
     assert isinstance(username_col.type, String)

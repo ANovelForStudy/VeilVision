@@ -1,25 +1,104 @@
-from abc import ABC, abstractmethod
-from typing import Dict
+from typing import Protocol
 from uuid import UUID
 
-from src.entities.users.models import User
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from src.entities.users.models import UserModel
+from src.entities.users.schemas import (
+    UserCreateRequestSchema,
+    UserCreateWithHashedPasswordRequestSchema,
+    UserResponseSchema,
+)
 
 
-class IUserRepository(ABC):
-    @abstractmethod
-    async def create(self, user: User) -> User: ...
+class IUserRepository(Protocol):
+    async def create_user(
+        self,
+        user_data: UserCreateWithHashedPasswordRequestSchema,
+    ) -> UserResponseSchema: ...
 
-    @abstractmethod
-    async def get_by_id(self, user_id: UUID) -> User | None: ...
+    async def get_user_by_id(
+        self,
+        user_id: UUID,
+    ) -> UserResponseSchema | None: ...
+
+    async def get_user_by_username(
+        self,
+        username: str,
+    ) -> UserResponseSchema | None: ...
+
+    # async def update_user(
+    #     self,
+    #     user_data: UserUpdateRequestSchema,
+    # ) -> UserResponseSchema: ...
+
+    # async def update_user_password(
+    #     self,
+    #     user_id: UUID,
+    #     new_password: str,
+    # ) -> UserResponseSchema: ...
+
+    async def delete_user_by_id(
+        self,
+        user_id: UUID,
+    ) -> None: ...
 
 
-class InMemoryUserRepository(IUserRepository):
-    def __init__(self) -> None:
-        self._users: Dict[UUID, User] = {}
+class SqlAlchemyUserRepository:
+    model = UserModel
 
-    async def create(self, user: User) -> User:
-        self._users[user.id] = user
-        return user
+    def __init__(
+        self,
+        session: AsyncSession,
+    ):
+        self._session = session
 
-    async def get_by_id(self, user_id: UUID) -> User | None:
-        return self._users.get(user_id)
+    # =====
+    # CREATE
+    # =====
+
+    async def create_user(
+        self,
+        user_data: UserCreateWithHashedPasswordRequestSchema,
+    ) -> UserModel:
+        user_model = self.model(
+            username=user_data.username,
+            hashed_password=user_data.hashed_password,
+        )
+
+        self._session.add(user_model)
+        await self._session.flush()
+        await self._session.refresh(user_model)
+
+        return UserResponseSchema.model_validate(user_model)
+
+    # =====
+    # READ
+    # =====
+
+    async def get_user_by_username(
+        self,
+        username: str,
+    ) -> UserResponseSchema | None:
+        query = select(self.model).where(
+            UserModel.username == username,
+        )
+
+        query_result = await self._session.execute(query)
+
+        user_model = query_result.scalar_one_or_none()
+
+        if not user_model:
+            return None
+
+        return UserResponseSchema.model_validate(user_model)
+
+    async def get_all_users(self) -> list[UserResponseSchema]:
+        query = select(self.model)
+
+        query_result = await self._session.execute(query)
+
+        user_models = query_result.scalars()
+
+        return [UserResponseSchema.model_validate(model) for model in user_models]

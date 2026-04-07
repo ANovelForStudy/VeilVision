@@ -2,10 +2,10 @@ from sqlalchemy import Boolean, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from src.core.models.base import BaseModel
-from src.core.models.mixins import TimestampMixinModel, UUIDMixinModel
+from src.core.models.mixins import TimestampMixinModel, UuidMixinModel
 
 
-class UserModel(BaseModel, TimestampMixinModel, UUIDMixinModel):
+class UserModel(BaseModel, TimestampMixinModel, UuidMixinModel):
     __tablename__ = "users"
 
     username: Mapped[str] = mapped_column(
