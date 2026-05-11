@@ -37,11 +37,11 @@ class CameraModel(BaseModel, UuidMixinModel, TimestampMixinModel):
         comment="Camera RTSP URL",
     )
 
-    # webrtc_url: Mapped[str | None] = mapped_column(
-    #     String(500),
-    #     nullable=True,
-    #     comment="WebRTC URL to connect to the stream in a browser",
-    # )
+    webrtc_url: Mapped[str | None] = mapped_column(
+        String(500),
+        nullable=True,
+        comment="WebRTC URL to connect to the stream in a browser",
+    )
 
     # status: Mapped[CameraStatusEnum] = mapped_column(
     #     SqlEnum(

@@ -11,6 +11,7 @@ import uvicorn
 from dishka import make_async_container
 from dishka.integrations.fastapi import setup_dishka
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from src.api.routers import include_routers
 from src.config import Config
@@ -20,12 +21,23 @@ from src.dependencies.providers import AppProvider, get_all_providers
 
 
 def get_fastapi_application() -> FastAPI:
+    # ! TODO: Replace with Offline docs
     app = FastAPI(
         # ! TODO: Move to .env
         debug=True,
+        redirect_slashes=True,
     )
 
     configure_dishka_container(app)
+
+    app.add_middleware(
+        CORSMiddleware,
+        # ! TODO: Replace with specific values
+        allow_origins="*",
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
     include_routers(app)
 

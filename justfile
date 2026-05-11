@@ -20,14 +20,17 @@ up:
 # =====
 
 # Make migrations
+[group("Database")]
 revision message:
     uv run alembic revision --autogenerate -m "{{message}}"
 
 # Apply migrations
+[group("Database")]
 migrate:
     uv run alembic upgrade head
 
 # Revert migrations
+[group("Database")]
 reset-db:
     uv run alembic downgrade base
 

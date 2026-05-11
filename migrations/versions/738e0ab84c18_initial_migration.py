@@ -1,8 +1,8 @@
 """Initial migration
 
-Revision ID: e8483ee3ad0a
+Revision ID: 738e0ab84c18
 Revises: 
-Create Date: 2026-05-11 20:37:16.211402
+Create Date: 2026-05-11 23:12:25.263484
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'e8483ee3ad0a'
+revision: str = '738e0ab84c18'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -27,6 +27,7 @@ def upgrade() -> None:
     sa.Column('description', sa.Text(), nullable=True, comment='Camera description'),
     sa.Column('location', sa.String(length=200), nullable=True, comment='Camera location'),
     sa.Column('rtsp_url', sa.String(length=500), nullable=False, comment='Camera RTSP URL'),
+    sa.Column('webrtc_url', sa.String(length=500), nullable=True, comment='WebRTC URL to connect to the stream in a browser'),
     sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
     sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
     sa.PrimaryKeyConstraint('id'),

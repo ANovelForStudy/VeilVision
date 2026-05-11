@@ -30,10 +30,14 @@ class CameraBaseSchema(BaseSchema):
     #     max_length=200,
     #     description="Camera location",
     # )
-    # ! TODO: Replace it with custom StreamUrl -> RtspUrl class hierarchy
+    # ! TODO: Replace it with custom RtspUrl class
     rtsp_url: str = Field(
         ...,
         description="Camera RTSP URL",
+    )
+    webrtc_url: str = Field(
+        ...,
+        description="Camera WebRTC URL",
     )
     # is_enabled: bool = Field(
     #     True,
@@ -71,10 +75,14 @@ class CameraUpdateRequestSchema(BaseSchema):
     #     max_length=200,
     #     description="Camera location",
     # )
-    # ! TODO: Replace it with custom StreamUrl -> RtspUrl class hierarchy
+    # ! TODO: Replace it with custom RtspUrl class
     rtsp_url: str | None = Field(
         None,
         description="Camera RTSP URL",
+    )
+    webrtc_url: str = Field(
+        ...,
+        description="Camera WebRTC URL",
     )
     # is_enabled: bool | None = Field(
     #     None,
