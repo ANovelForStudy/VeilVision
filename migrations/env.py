@@ -14,6 +14,7 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from src.config import Config
 from src.core.models.base import BaseModel
+from src.entities.cameras.models import CameraModel
 from src.entities.users.models import UserModel
 
 # this is the Alembic Config object, which provides

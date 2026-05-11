@@ -7,6 +7,7 @@ from src.config.database import PostgresSettings
 from src.core.uow import IUnitOfWork, SqlAlchemyUnitOfWork
 from src.database.helpers import DatabaseHelper
 from src.database.interfaces import IDatabaseHelper
+from src.entities.cameras.services import CameraService
 from src.entities.users.password_hasher import BcryptPasswordHasher, IPasswordHasher
 from src.entities.users.services import UserService
 
@@ -102,6 +103,15 @@ class ServicesProvider(Provider):
         return UserService(
             uow=uow,
             password_hasher=password_hasher,
+        )
+
+    @provide
+    async def get_camera_service(
+        self,
+        uow: IUnitOfWork,
+    ) -> CameraService:
+        return CameraService(
+            uow=uow,
         )
 
 

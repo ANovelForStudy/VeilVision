@@ -14,6 +14,23 @@ default:
 up:
     uv run python -m src.main
 
+
+# =====
+# ALEMBIC MIGRATIONS
+# =====
+
+# Make migrations
+revision message:
+    uv run alembic revision --autogenerate -m "{{message}}"
+
+# Apply migrations
+migrate:
+    uv run alembic upgrade head
+
+# Revert migrations
+reset-db:
+    uv run alembic downgrade base
+
 # =====
 # TESTS
 # =====

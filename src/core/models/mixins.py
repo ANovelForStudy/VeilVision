@@ -9,13 +9,6 @@ from sqlalchemy.orm import Mapped, mapped_column
 class TimestampMixinModel:
     __abstract__ = True
 
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(
-            timezone=True,
-        ),
-        server_default=func.now(),
-        nullable=False,
-    )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(
             timezone=True,
@@ -23,6 +16,15 @@ class TimestampMixinModel:
         server_default=func.now(),
         server_onupdate=func.now(),
         nullable=False,
+        sort_order=99,
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(
+            timezone=True,
+        ),
+        server_default=func.now(),
+        nullable=False,
+        sort_order=100,
     )
 
 
@@ -36,4 +38,5 @@ class UuidMixinModel:
         primary_key=True,
         default=uuid.uuid4,
         nullable=False,
+        sort_order=-1,
     )

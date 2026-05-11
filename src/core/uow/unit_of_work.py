@@ -1,6 +1,10 @@
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from src.core.uow.interfaces import IUnitOfWork
+from src.entities.cameras.repositories import (
+    ICameraRepository,
+    SqlAlchemyCameraRepository,
+)
 from src.entities.users.repositories import IUserRepository, SqlAlchemyUserRepository
 
 
@@ -15,11 +19,13 @@ class SqlAlchemyUnitOfWork(IUnitOfWork):
         # Repositories
         # ! TODO: Replace it with property for lazy initialization
         self.user_repository: IUserRepository | None = None
+        self.camera_repository: ICameraRepository | None = None
 
     async def __aenter__(self):
         self._session: AsyncSession = self._session_factory()
 
         self.user_repository = SqlAlchemyUserRepository(session=self._session)
+        self.camera_repository = SqlAlchemyCameraRepository(session=self._session)
 
         return self
 

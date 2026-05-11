@@ -1,10 +1,12 @@
 from abc import ABC, abstractmethod
 
+from src.entities.cameras.repositories import ICameraRepository
 from src.entities.users.repositories import IUserRepository
 
 
 class IUnitOfWork(ABC):
     user_repository: IUserRepository
+    camera_repository: ICameraRepository
 
     @abstractmethod
     async def __aenter__(self): ...

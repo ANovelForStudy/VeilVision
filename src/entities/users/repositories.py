@@ -89,10 +89,7 @@ class SqlAlchemyUserRepository:
 
         user_model = query_result.scalar_one_or_none()
 
-        if not user_model:
-            return None
-
-        return UserResponseSchema.model_validate(user_model)
+        return UserResponseSchema.model_validate(user_model) if user_model else None
 
     async def get_all_users(self) -> list[UserResponseSchema]:
         query = select(self.model)

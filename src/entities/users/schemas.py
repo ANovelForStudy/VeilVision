@@ -4,7 +4,7 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field, SecretStr, field_validator
 
 from src.core.schemas.base import BaseSchema, BaseSchemaWithForbiddenExtra
-from src.core.schemas.mixins import TimestampMixinSchema
+from src.core.schemas.mixins import TimestampMixinSchema, UuidMixinSchema
 
 # =====
 # BASE
@@ -50,7 +50,11 @@ class UserCreateWithHashedPasswordRequestSchema(UserBaseSchema):
 # =====
 
 
-class UserResponseSchema(BaseSchemaWithForbiddenExtra, TimestampMixinSchema):
+class UserResponseSchema(
+    UuidMixinSchema,
+    BaseSchemaWithForbiddenExtra,
+    TimestampMixinSchema,
+):
     id: UUID
     username: str = Field(
         min_length=3,

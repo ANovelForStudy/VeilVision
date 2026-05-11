@@ -1,5 +1,6 @@
 from fastapi import APIRouter, FastAPI
 
+from src.entities.cameras.controllers import cameras_router
 from src.entities.users.controllers import users_router
 
 
@@ -8,6 +9,7 @@ def include_routers(app: FastAPI) -> None:
 
     routers: list[APIRouter] = [
         users_router,
+        cameras_router,
     ]
 
     for router in routers:
