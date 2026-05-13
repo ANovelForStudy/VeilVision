@@ -22,7 +22,7 @@ up:
 # Make migrations
 [group("Database")]
 revision message:
-    uv run alembic revision --autogenerate -m "{{message}}"
+    uv run alembic revision --autogenerate -m "{{ message }}"
 
 # Apply migrations
 [group("Database")]

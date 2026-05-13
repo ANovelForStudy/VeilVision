@@ -9,5 +9,13 @@ class TimestampMixinSchema(BaseModel):
     updated_at: datetime
 
 
+class CreatedAtMixinSchema(BaseModel):
+    created_at: datetime
+
+
 class UuidMixinSchema(BaseModel):
     id: UUID
+
+
+class IdMixinSchema(BaseModel):
+    id: int

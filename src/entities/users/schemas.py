@@ -1,7 +1,6 @@
-from datetime import datetime
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field, SecretStr, field_validator
+from pydantic import Field, SecretStr, field_validator
 
 from src.core.schemas.base import BaseSchema, BaseSchemaWithForbiddenExtra
 from src.core.schemas.mixins import TimestampMixinSchema, UuidMixinSchema

@@ -7,6 +7,8 @@ from fastapi import APIRouter, Body, Path, status
 
 from src.entities.cameras.schemas import CameraCreateRequestSchema, CameraResponseSchema
 from src.entities.cameras.services import CameraService
+from src.entities.events.schemas import EventResponseSchema
+from src.entities.events.services import EventService
 
 cameras_router = APIRouter(
     prefix="/cameras",
@@ -78,3 +80,22 @@ async def get_camera_by_id(
     )
 
     return found_camera
+
+
+@cameras_router.get(
+    "/{camera_id}/events",
+    response_model=list[EventResponseSchema],
+    status_code=status.HTTP_200_OK,
+)
+async def get_camera_events(
+    service: FromDishka[EventService],
+    camera_id: Annotated[
+        UUID,
+        Path(),
+    ],
+):
+    found_events = await service.get_camera_events(
+        camera_id=camera_id,
+    )
+
+    return found_events

@@ -17,7 +17,7 @@ from src.api.routers import include_routers
 from src.config import Config
 from src.config.base import BaseConfig
 from src.config.database import PostgresSettings
-from src.dependencies.providers import AppProvider, get_all_providers
+from src.dependencies.providers import get_all_providers
 
 
 def get_fastapi_application() -> FastAPI:

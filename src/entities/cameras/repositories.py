@@ -1,14 +1,13 @@
 from typing import Protocol
 from uuid import UUID
 
-from sqlalchemy import select, text
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.entities.cameras.models import CameraModel
 from src.entities.cameras.schemas import (
     CameraCreateRequestSchema,
     CameraResponseSchema,
-    CameraShortResponseSchema,
 )
 
 # =====
@@ -33,7 +32,7 @@ class ICameraRepository(Protocol):
 
     async def get_camera_by_id(
         self,
-        camera_id: int,
+        camera_id: UUID,
     ) -> CameraResponseSchema | None: ...
 
 
@@ -91,7 +90,7 @@ class SqlAlchemyCameraRepository(ICameraRepository):
 
     async def get_camera_by_id(
         self,
-        camera_id: int,
+        camera_id: UUID,
     ) -> CameraResponseSchema | None:
         query = select(
             self.model,

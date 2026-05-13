@@ -1,8 +1,6 @@
-from datetime import datetime
-from uuid import UUID, uuid4
+from uuid import UUID
 
-from pydantic import AnyUrl, BaseModel, Field, HttpUrl, SecretStr, validator
-from sqlalchemy.orm import mapped_column
+from pydantic import Field
 
 from src.core.schemas.base import BaseSchema
 from src.core.schemas.mixins import TimestampMixinSchema, UuidMixinSchema

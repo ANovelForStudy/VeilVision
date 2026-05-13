@@ -1,9 +1,14 @@
+from uuid import UUID
+
 from src.core.uow.interfaces import IUnitOfWork
 from src.entities.cameras.schemas import CameraCreateRequestSchema, CameraResponseSchema
 
 
 class CameraService:
-    def __init__(self, uow: IUnitOfWork):
+    def __init__(
+        self,
+        uow: IUnitOfWork,
+    ):
         self._uow = uow
 
     # =====
@@ -51,7 +56,7 @@ class CameraService:
 
     async def get_camera_by_id(
         self,
-        camera_id: int,
+        camera_id: UUID,
     ) -> CameraResponseSchema | None:
         async with self._uow:
             existing_camera: (
@@ -68,7 +73,7 @@ class CameraService:
 
     async def get_camera_by_rtsp_url(
         self,
-        camera_rtsp_url: int,
+        camera_rtsp_url: str,
     ) -> CameraResponseSchema | None:
         async with self._uow:
             existing_camera: (

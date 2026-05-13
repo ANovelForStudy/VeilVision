@@ -8,6 +8,7 @@ from src.core.uow import IUnitOfWork, SqlAlchemyUnitOfWork
 from src.database.helpers import DatabaseHelper
 from src.database.interfaces import IDatabaseHelper
 from src.entities.cameras.services import CameraService
+from src.entities.events.services import EventService
 from src.entities.users.password_hasher import BcryptPasswordHasher, IPasswordHasher
 from src.entities.users.services import UserService
 
@@ -111,6 +112,15 @@ class ServicesProvider(Provider):
         uow: IUnitOfWork,
     ) -> CameraService:
         return CameraService(
+            uow=uow,
+        )
+
+    @provide
+    async def get_event_service(
+        self,
+        uow: IUnitOfWork,
+    ) -> EventService:
+        return EventService(
             uow=uow,
         )
 

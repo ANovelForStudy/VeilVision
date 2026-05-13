@@ -6,7 +6,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.entities.users.models import UserModel
 from src.entities.users.schemas import (
-    UserCreateRequestSchema,
     UserCreateWithHashedPasswordRequestSchema,
     UserResponseSchema,
 )
@@ -45,7 +44,7 @@ class IUserRepository(Protocol):
     ) -> None: ...
 
 
-class SqlAlchemyUserRepository:
+class SqlAlchemyUserRepository(IUserRepository):
     model = UserModel
 
     def __init__(

@@ -9,13 +9,12 @@ sys.path.append(
 from logging.config import fileConfig
 
 from alembic import context
-from sqlalchemy import Connection, engine_from_config, pool
+from sqlalchemy import Connection, pool
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from src.config import Config
 from src.core.models.base import BaseModel
-from src.entities.cameras.models import CameraModel
-from src.entities.users.models import UserModel
+from src.core.models.registry import CameraModel, EventModel, UserModel
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

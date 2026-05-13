@@ -28,6 +28,19 @@ class TimestampMixinModel:
     )
 
 
+class CreatedAtMixinModel:
+    __abstract__ = True
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(
+            timezone=True,
+        ),
+        server_default=func.now(),
+        nullable=False,
+        sort_order=100,
+    )
+
+
 class UuidMixinModel:
     __abstract__ = True
 
