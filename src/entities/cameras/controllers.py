@@ -99,3 +99,24 @@ async def get_camera_events(
     )
 
     return found_events
+
+
+# =====
+# DELETE
+# =====
+
+
+@cameras_router.delete(
+    "/{camera_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+async def delete_camera_by_id(
+    service: FromDishka[CameraService],
+    camera_id: Annotated[
+        UUID,
+        Path(),
+    ],
+):
+    await service.detele_camera_by_id(
+        camera_id=camera_id,
+    )

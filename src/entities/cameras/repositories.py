@@ -35,6 +35,11 @@ class ICameraRepository(Protocol):
         camera_id: UUID,
     ) -> CameraResponseSchema | None: ...
 
+    async def detele_camera_by_id(
+        self,
+        camera_id: UUID,
+    ) -> None: ...
+
 
 # =====
 # IMPLEMENTATIONS
@@ -127,3 +132,26 @@ class SqlAlchemyCameraRepository(ICameraRepository):
         return (
             CameraResponseSchema.model_validate(camera_model) if camera_model else None
         )
+
+    # =====
+    # DELETE
+    # =====
+
+    async def detele_camera_by_id(
+        self,
+        camera_id: UUID,
+    ) -> None:
+        query = select(
+            self.model,
+        ).where(
+            self.model.id == camera_id,
+        )
+
+        query_result = await self._session.execute(
+            query,
+        )
+
+        existing_camera = query_result.scalar_one_or_none()
+
+        if existing_camera:
+            await self._session.delete(existing_camera)

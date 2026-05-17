@@ -87,3 +87,12 @@ class CameraService:
                 raise Exception("Camera with specified RTSP URL not found")
 
             return CameraResponseSchema.model_validate(existing_camera)
+
+    async def detele_camera_by_id(
+        self,
+        camera_id: UUID,
+    ) -> None:
+        async with self._uow:
+            await self._uow.camera_repository.detele_camera_by_id(
+                camera_id=camera_id,
+            )
