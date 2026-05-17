@@ -38,11 +38,15 @@ class EventModel(BaseModel, CreatedAtMixinModel):
         comment="Detection confidence score (0.0 to 1.0)",
     )
 
-    image_path: Mapped[str | None] = mapped_column(
-        String(500),
+    # detections ... e.g. [{"class": "person", "bbox": [x1,y1,x2,y2], "confidence": 0.95}]
+
+    storage_filename: Mapped[str | None] = mapped_column(
+        String(255),
         nullable=True,
-        comment="Path to the saved event snapshot/image",
+        comment="Event snapshot/image name",
     )
+
+    # file_size ...
 
     # Relations
     camera: Mapped["CameraModel"] = relationship(

@@ -15,6 +15,7 @@ dependencies = [
     "loguru>=0.7.3",
     "pydantic>=2.12.5",
     "pydantic-settings>=2.13.1",
+    "python-multipart>=0.0.28",
     "rust-just>=1.47.0",
     "sqlalchemy[async]>=2.0.48",
     "uvicorn>=0.42.0",

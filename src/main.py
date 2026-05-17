@@ -12,12 +12,16 @@ from dishka import make_async_container
 from dishka.integrations.fastapi import setup_dishka
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from src.api.routers import include_routers
 from src.config import Config
 from src.config.base import BaseConfig
 from src.config.database import PostgresSettings
 from src.dependencies.providers import get_all_providers
+
+# ! TODO: Move to .env
+STATIC_DIR = Path(__file__).parents[1] / "static"
 
 
 def get_fastapi_application() -> FastAPI:
@@ -26,6 +30,13 @@ def get_fastapi_application() -> FastAPI:
         # ! TODO: Move to .env
         debug=True,
         redirect_slashes=True,
+    )
+
+    app.mount(
+        "/static",
+        StaticFiles(
+            directory=STATIC_DIR,
+        ),
     )
 
     configure_dishka_container(app)

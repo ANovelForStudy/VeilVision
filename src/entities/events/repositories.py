@@ -1,7 +1,7 @@
 from typing import Protocol
 from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -33,6 +33,12 @@ class IEventRepository(Protocol):
         event_id: int,
     ) -> EventResponseSchema | None: ...
 
+    async def update_image(
+        self,
+        event_id: int,
+        storage_filename: str,
+    ) -> EventResponseSchema | None: ...
+
 
 # =====
 # IMPLEMENTATIONS
@@ -60,6 +66,7 @@ class SqlAlchemyEventRepository(IEventRepository):
 
         self._session.add(event_model)
 
+        # ! TODO: Check SQL returning operator
         await self._session.flush()
         await self._session.refresh(event_model)
 
@@ -123,3 +130,39 @@ class SqlAlchemyEventRepository(IEventRepository):
         event_models = query_result.scalars()
 
         return [EventResponseSchema.model_validate(model) for model in event_models]
+
+    # =====
+    # UPDATE
+    # =====
+
+    async def update_image(
+        self,
+        event_id: int,
+        storage_filename: str,
+    ) -> EventResponseSchema | None:
+        update_data = {
+            "storage_filename": storage_filename,
+        }
+
+        query = (
+            update(
+                EventModel,
+            )
+            .where(
+                EventModel.id == event_id,
+            )
+            .values(
+                **update_data,
+            )
+            .returning(
+                EventModel,
+            )
+        )
+
+        query_result = await self._session.execute(
+            query,
+        )
+
+        event_model = query_result.scalar_one_or_none()
+
+        return EventResponseSchema.model_validate(event_model) if event_model else None

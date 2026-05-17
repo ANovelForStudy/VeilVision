@@ -49,6 +49,8 @@ class ICameraRepository(Protocol):
 class SqlAlchemyCameraRepository(ICameraRepository):
     model = CameraModel
 
+    # ! TODO: Rewrite the repository to only work with models without pydantic validation
+
     def __init__(
         self,
         session: AsyncSession,

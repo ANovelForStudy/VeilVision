@@ -18,14 +18,11 @@ class SqlAlchemyUnitOfWork(IUnitOfWork):
         self._session: AsyncSession | None = None
 
         # Repositories
-        # ! TODO: Replace it with property for lazy initialization
-        self.user_repository: IUserRepository | None = None
-        self.camera_repository: ICameraRepository | None = None
-        self.event_repository: IEventRepository | None = None
 
     async def __aenter__(self):
         self._session: AsyncSession = self._session_factory()
 
+        # ! TODO: Replace it with property for lazy initialization
         self.user_repository = SqlAlchemyUserRepository(session=self._session)
         self.camera_repository = SqlAlchemyCameraRepository(session=self._session)
         self.event_repository = SqlAlchemyEventRepository(session=self._session)

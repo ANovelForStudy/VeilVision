@@ -3,7 +3,7 @@ from uuid import UUID
 
 from dishka import FromDishka
 from dishka.integrations.fastapi import DishkaRoute
-from fastapi import APIRouter, Body, Path, status
+from fastapi import APIRouter, Body, File, Path, UploadFile, status
 from pydantic import PositiveInt
 
 from src.entities.events.schemas import EventCreateRequestSchema, EventResponseSchema
@@ -80,3 +80,36 @@ async def get_event_by_id(
     )
 
     return found_event
+
+
+# =====
+# UPDATE
+# =====
+
+
+@events_router.post(
+    "/{event_id}/image",
+    response_model=EventResponseSchema,
+    status_code=status.HTTP_200_OK,
+)
+async def upload_event_image(
+    event_id: Annotated[
+        int,
+        Path(
+            description="Event ID",
+        ),
+    ],
+    image: Annotated[
+        UploadFile,
+        File(
+            description="YOLO detection snapshot",
+        ),
+    ],
+    service: FromDishka[EventService],
+):
+    event = await service.upload_event_image(
+        event_id=event_id,
+        image=image,
+    )
+
+    return event

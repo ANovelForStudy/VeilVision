@@ -1,7 +1,9 @@
 from uuid import UUID
 
+from fastapi import HTTPException, UploadFile, status
+
 from src.core.uow.interfaces import IUnitOfWork
-from src.entities.cameras.schemas import CameraCreateRequestSchema, CameraResponseSchema
+from src.entities.events.managers import IDetectionImageManager
 from src.entities.events.schemas import EventCreateRequestSchema, EventResponseSchema
 
 
@@ -9,8 +11,11 @@ class EventService:
     def __init__(
         self,
         uow: IUnitOfWork,
+        # ! TODO: Replace with dishka
+        image_manager: IDetectionImageManager,
     ):
         self._uow = uow
+        self._image_manager = image_manager
 
     # =====
     # CREATE
@@ -72,3 +77,36 @@ class EventService:
             )
 
             return found_events
+
+    # =====
+    # UPDATE
+    # =====
+
+    async def upload_event_image(
+        self,
+        event_id: int,
+        image: UploadFile,
+    ) -> EventResponseSchema:
+        async with self._uow:
+            event = await self._uow.event_repository.get_event_by_id(
+                event_id=event_id,
+            )
+
+            if not event:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"Event with id {event_id} not found",
+                )
+
+            storage_filename, _ = await self._image_manager.save_upload_file(image)
+
+            print(storage_filename)
+
+            updated_event = await self._uow.event_repository.update_image(
+                event_id=event_id,
+                storage_filename=storage_filename,
+            )
+
+            await self._uow.commit()
+
+            return updated_event

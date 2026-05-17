@@ -6,9 +6,9 @@ from src.entities.users.repositories import IUserRepository
 
 
 class IUnitOfWork(ABC):
-    user_repository: IUserRepository | None
-    camera_repository: ICameraRepository | None
-    event_repository: IEventRepository | None
+    user_repository: IUserRepository
+    camera_repository: ICameraRepository
+    event_repository: IEventRepository
 
     @abstractmethod
     async def __aenter__(self): ...

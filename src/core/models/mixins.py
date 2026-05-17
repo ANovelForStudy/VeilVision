@@ -10,19 +10,17 @@ class TimestampMixinModel:
     __abstract__ = True
 
     updated_at: Mapped[datetime] = mapped_column(
-        DateTime(
-            timezone=True,
-        ),
-        server_default=func.now(),
-        server_onupdate=func.now(),
+        DateTime(),
+        default=datetime.now,
+        # server_default=func.now(),
+        # server_onupdate=func.now(),
         nullable=False,
         sort_order=99,
     )
     created_at: Mapped[datetime] = mapped_column(
-        DateTime(
-            timezone=True,
-        ),
-        server_default=func.now(),
+        DateTime(),
+        default=datetime.now,
+        # server_default=func.now(),
         nullable=False,
         sort_order=100,
     )
@@ -32,10 +30,9 @@ class CreatedAtMixinModel:
     __abstract__ = True
 
     created_at: Mapped[datetime] = mapped_column(
-        DateTime(
-            timezone=True,
-        ),
-        server_default=func.now(),
+        DateTime(),
+        default=datetime.now,
+        # server_default=func.now(),
         nullable=False,
         sort_order=100,
     )

@@ -8,6 +8,7 @@ from src.core.uow import IUnitOfWork, SqlAlchemyUnitOfWork
 from src.database.helpers import DatabaseHelper
 from src.database.interfaces import IDatabaseHelper
 from src.entities.cameras.services import CameraService
+from src.entities.events.managers import DetectionImageManager, IDetectionImageManager
 from src.entities.events.services import EventService
 from src.entities.users.password_hasher import BcryptPasswordHasher, IPasswordHasher
 from src.entities.users.services import UserService
@@ -92,6 +93,16 @@ class UtilsProvider(Provider):
         return BcryptPasswordHasher()
 
 
+class ManagersProvider(Provider):
+    scope = Scope.REQUEST
+
+    @provide
+    async def get_image_manager(
+        self,
+    ) -> IDetectionImageManager:
+        return DetectionImageManager()
+
+
 class ServicesProvider(Provider):
     scope = Scope.REQUEST
 
@@ -119,9 +130,11 @@ class ServicesProvider(Provider):
     async def get_event_service(
         self,
         uow: IUnitOfWork,
+        image_manager: IDetectionImageManager,
     ) -> EventService:
         return EventService(
             uow=uow,
+            image_manager=image_manager,
         )
 
 
@@ -130,5 +143,6 @@ def get_all_providers() -> list[Provider]:
         AppProvider(),
         DatabaseProvider(),
         UtilsProvider(),
+        ManagersProvider(),
         ServicesProvider(),
     ]
